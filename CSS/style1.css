@@ -1,0 +1,41 @@
+h1{
+    color: red;
+    height: 50px;
+    width: 135px;
+}
+
+h2{
+    color: blue;
+    height: 50px;
+    width: 135px;
+}
+
+body{
+    text-align: center;
+}
+
+button{
+    color: rgb(255,55,10);
+    background-color: blue;
+    cursor: pointer;
+    border-color: yellow;
+}
+
+*{
+    background-color: aqua;
+}
+
+#tejas{
+    color: black;
+    text-align: center;
+    text-decoration: red dotted underline;
+    font-weight: bolder;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-size: larger;
+    text-transform: capitalize;
+    line-height: 10px;
+}
+
+.tejas{
+    color: yellow;
+}
