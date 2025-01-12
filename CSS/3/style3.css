@@ -1,17 +1,58 @@
-
-div {
+div{
+    background-color: red;
     height:100px;
     width:100px;
-    background-color: aqua;
-    border: 2px solid black;
-    display: inline;
+    display: inline-block;
+    border: 3px solid black ;
+
 }
 
 #box1{
-    position: static;
+    position: relative;
+    background-color: red;
+    left: 170px;
+    z-index: 2;
 }
 
 #box2{
     position: relative;
+    background-color: green;
     top: 10px;
+    left: 20px;
+    z-index: 1;
+}
+
+#box3{
+    position: sticky;
+    background-color: yellow;
+    top: 0px;
+    left: 100px;
+    z-index: 1;
+
+}
+
+#box4{
+    position: fixed;
+    top: 10px;
+    left: 90px;
+    background-color: blue;
+    z-index: -1;
+}
+
+#boxa{
+    background-color: red;
+    background-image: url(images/cat.jpg);
+    background-size: cover;
+}
+
+#boxb{
+    background-color: green;
+}
+
+#boxc{
+    background-color: yellow;
+}
+
+#boxd{
+    background-color: blue;
 }
