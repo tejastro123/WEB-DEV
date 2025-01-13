@@ -1,11 +1,11 @@
 
 
-/*div{
+div{
     height: 100px;
     width: 50px;
     display: inline-block;
     border: 2px solid black;
-}*/
+}
 #container{
     width: 500px;
     height: 300px;
@@ -81,4 +81,10 @@ div{
     div{
         background-color: red;
     }
+}
+
+@media (min-width:400px) and (max-width:500px){
+    div{
+        background-color: black;
+    }    
 }
