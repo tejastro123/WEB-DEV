@@ -13,9 +13,15 @@
     width: 100px;
 }
 .logo{
-    background-image: url("D:\WEB DEV\FRONT-END\PROJECTS\AMAZON clone\amazon_logo.png");
+    background-image: url("amazon_logo.png");
     background-size: cover;
     height: 50px;
     width: 100%;
 
+}
+.border{
+    border: 2px solid transparent;
+}
+.border:hover{
+    border: 2px solid white;
 }
