@@ -62,3 +62,7 @@ for(let key in obj){
     console.log(key + " -> " + obj[key])
 }
 
+let str = "tejas mellimpudi";
+for( let i in str){
+    console.log(str[i]);
+}
