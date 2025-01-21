@@ -66,3 +66,36 @@ let str = "tejas mellimpudi";
 for( let i in str){
     console.log(str[i]);
 }
+
+let student = {
+    name: "tejas",
+    age: 20,
+    grade: "A",
+    ispass : true,
+};
+
+for(let key in student){
+    console.log(key + " -> " + student[key])
+}
+
+for(let num =0; num<=100; num++){
+    if(num % 2 === 0){
+        console.log(num)
+        continue;
+    }
+}
+
+// number guessing game 
+let number = Math.floor(Math.random() * 100) + 1;
+
+let guess = Number;
+while(guess !== number){
+    guess = Number(prompt("Guess a number between 1 and 100"));
+    if(guess < number){
+        alert("Too low! Try again.");
+    }else if(guess > number){
+        alert("Too high! Try again.");
+    }
+}
+console.log(number);
+ 
