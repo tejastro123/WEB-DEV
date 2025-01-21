@@ -1,5 +1,5 @@
-console.log("HELLO I AM TEJAS")
 
+console.log("HELLO I AM TEJAS")
 //for loop
 
 for(let i = 0; i < 10; i++){
