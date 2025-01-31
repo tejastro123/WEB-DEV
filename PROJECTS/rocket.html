@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocket Launch Telemetry</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #0a0a2a;
+            color: #fff;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .visualization {
+            background-color: #1a1a4a;
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        #rocket-animation {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(to bottom, #000033, #000066);
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+
+        .rocket {
+            width: 40px;
+            height: 100px;
+            background-image: url("PROJECTS/image.png"); /* Replace with your rocket image */
+            background-size: contain;
+            background-repeat: no-repeat;
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.5s ease;
+        }
+
+        .telemetry-data {
+            background-color: #1a1a4a;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .data-item {
+            margin-bottom: 15px;
+        }
+
+        .data-label {
+            font-size: 0.9em;
+            color: #88a;
+        }
+
+        .data-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .mission-status {
+            background-color: #2a2a6a;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        #status-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .stage-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #2a2a6a;
+            border-radius: 5px;
+        }
+
+        .stage {
+            padding: 5px 10px;
+            border-radius: 3px;
+            background-color: #333;
+        }
+
+        .stage.active {
+            background-color: #4CAF50;
+        }
+
+        .launch-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .launch-button button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .launch-button button:disabled {
+            background-color: #888;
+            cursor: not-allowed;
+        }
+
+        .events-log {
+            background-color: #2a2a6a;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .event {
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #88a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="visualization">
+            <div id="rocket-animation">
+                <div class="rocket"></div>
+            </div>
+            <div class="stage-indicator">
+                <div class="stage" id="stage-1">Launch</div>
+                <div class="stage" id="stage-2">Stage Separation</div>
+                <div class="stage" id="stage-3">Fairing Separation</div>
+                <div class="stage" id="stage-4">Satellite Deploy</div>
+                <div class="stage" id="stage-5">Booster Landing</div>
+                <div class="stage" id="stage-6">Mission Successful</div>
+            </div>
+            <div class="launch-button">
+                <button id="launch-btn" onclick="startSimulation()">Launch</button>
+            </div>
+        </div>
+        <div class="telemetry-data">
+            <div class="mission-status">
+                Mission Status: <span id="status-text">Preparing for Launch</span>
+            </div>
+            <div class="data-item">
+                <div class="data-label">Range</div>
+                <div class="data-value" id="range">0 km</div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">Altitude</div>
+                <div class="data-value" id="altitude">0 km</div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">Velocity</div>
+                <div class="data-value" id="velocity">0 km/s</div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">Acceleration</div>
+                <div class="data-value" id="acceleration">0 m/s²</div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">Thrust</div>
+                <div class="data-value" id="thrust">0 kN</div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">Fuel Remaining</div>
+                <div class="data-value" id="fuel">100%</div>
+            </div>
+            <div class="events-log">
+                <div id="events-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulation parameters
+        let currentTime = 0;
+        let currentStage = 0;
+        const stages = [
+            { name: 'Launch', duration: 5000 },
+            { name: 'Stage Separation', duration: 8000 },
+            { name: 'Fairing Separation', duration: 5000 },
+            { name: 'Satellite Deploy', duration: 7000 },
+            { name: 'Booster Landing', duration: 10000 },
+            { name: 'Mission Successful', duration: 0 }
+        ];
+
+        // Update telemetry data
+        function updateTelemetry(time) {
+            const range = Math.min(1000, time / 50);
+            const altitude = Math.min(400, time / 100);
+            const velocity = Math.min(7.8, time / 1000);
+            const acceleration = Math.max(0, 9.8 - (time / 5000));
+            const thrust = Math.max(0, 1000 - (time / 50));
+            const fuel = Math.max(0, 100 - (time / 350));
+
+            document.getElementById('range').textContent = range.toFixed(1) + ' km';
+            document.getElementById('altitude').textContent = altitude.toFixed(1) + ' km';
+            document.getElementById('velocity').textContent = velocity.toFixed(1) + ' km/s';
+            document.getElementById('acceleration').textContent = acceleration.toFixed(1) + ' m/s²';
+            document.getElementById('thrust').textContent = Math.floor(thrust) + ' kN';
+            document.getElementById('fuel').textContent = Math.floor(fuel) + '%';
+        }
+
+        // Update rocket animation
+        function updateRocketAnimation(time) {
+            const rocket = document.querySelector('.rocket');
+            const height = Math.min(80, time / 200);
+            rocket.style.bottom = height + '%';
+        }
+
+        // Update mission status
+        function updateMissionStatus() {
+            const stageElements = document.querySelectorAll('.stage');
+            stageElements.forEach((el, index) => {
+                el.classList.remove('active');
+                if (index === currentStage) {
+                    el.classList.add('active');
+                }
+            });
+            
+            document.getElementById('status-text').textContent = stages[currentStage].name;
+            logEvent(stages[currentStage].name);
+        }
+
+        // Log events
+        function logEvent(event) {
+            const eventsList = document.getElementById('events-list');
+            const eventElement = document.createElement('div');
+            eventElement.className = 'event';
+            eventElement.textContent = `[${new Date().toLocaleTimeString()}] ${event}`;
+            eventsList.appendChild(eventElement);
+            eventsList.scrollTop = eventsList.scrollHeight;
+        }
+
+        // Main simulation loop
+        function simulate() {
+            currentTime += 100;
+            updateTelemetry(currentTime);
+            updateRocketAnimation(currentTime);
+
+            // Check for stage transitions
+            let totalTime = 0;
+            for (let i = 0; i < stages.length; i++) {
+                totalTime += stages[i].duration;
+                if (currentTime >= totalTime && currentStage < i + 1) {
+                    currentStage = i + 1;
+                    updateMissionStatus();
+                }
+            }
+
+            if (currentStage < stages.length - 1) {
+                setTimeout(simulate, 100);
+            } else {
+                document.getElementById('launch-btn').disabled = false;
+            }
+        }
+
+        // Start simulation
+        function startSimulation() {
+            document.getElementById('launch-btn').disabled = true;
+            currentTime = 0;
+            currentStage = 0;
+            document.getElementById('events-list').innerHTML = '';
+            updateMissionStatus();
+            simulate();
+        }
+    </script>
+</body>
+</html>

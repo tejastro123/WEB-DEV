@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Management System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+    .tab-button {
+      padding: 10px 20px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .tab-button:hover {
+      background-color: #555;
+    }
+    .tab-button.active {
+      background-color: #007BFF;
+    }
+    .tab-content {
+      display: none;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 4px;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    input[type="text"], input[type="number"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #555;
+    }
+    .analytics {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+    .analytics div {
+      text-align: center;
+      padding: 20px;
+      background: #f4f4f4;
+      border-radius: 4px;
+      width: 30%;
+    }
+    .notification {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      display: none;
+    }
+    .notification.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .notification.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .search-bar {
+      margin-bottom: 20px;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    @media (max-width: 768px) {
+      .analytics {
+        flex-direction: column;
+        align-items: center;
+      }
+      .analytics div {
+        width: 80%;
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Student Management System</h1>
+
+    <!-- Analytics Dashboard -->
+    <div class="section">
+      <h2>Analytics Dashboard</h2>
+      <div class="analytics">
+        <div>
+          <h3>Total Students</h3>
+          <p id="totalStudents">0</p>
+        </div>
+        <div>
+          <h3>Total Fees Collected</h3>
+          <p id="totalFees">$0</p>
+        </div>
+        <div>
+          <h3>Total Attendance</h3>
+          <p id="totalAttendance">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs for Student Details -->
+    <div class="tabs">
+      <button class="tab-button active" onclick="openTab(event, 'StudentManagement')">Student Management</button>
+      <button class="tab-button" onclick="openTab(event, 'PersonalDetails')">Personal Details</button>
+      <button class="tab-button" onclick="openTab(event, 'AcademicDetails')">Academic Details</button>
+      <button class="tab-button" onclick="openTab(event, 'SportsDetails')">Sports Details</button>
+      <button class="tab-button" onclick="openTab(event, 'TechDetails')">Tech Details</button>
+    </div>
+
+    <!-- Student Management Tab -->
+    <div id="StudentManagement" class="tab-content active">
+      <h2>Student Management</h2>
+      <div class="search-bar">
+        <input type="text" id="searchStudent" placeholder="Search by Name or ID" oninput="searchStudents()">
+      </div>
+      <form id="studentForm" novalidate>
+        <input type="text" id="studentName" placeholder="Student Name" required>
+        <input type="text" id="studentId" placeholder="Student ID" required pattern="^[A-Za-z0-9]+$" title="Only alphanumeric characters are allowed.">
+        <button type="submit">Add Student</button>
+      </form>
+      <div id="notification" class="notification"></div>
+      <table id="studentTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>ID</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Student rows will be added here dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Personal Details Tab -->
+    <div id="PersonalDetails" class="tab-content">
+      <h2>Personal Details</h2>
+      <form id="personalForm" novalidate>
+        <input type="text" id="personalId" placeholder="Student ID" required>
+        <input type="text" id="personalAddress" placeholder="Address" required>
+        <input type="text" id="personalPhone" placeholder="Phone Number" required pattern="^\d{10}$" title="Please enter a valid 10-digit phone number.">
+        <button type="submit">Add Personal Details</button>
+      </form>
+      <table id="personalTable">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Address</th>
+            <th>Phone Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Personal details rows will be added here dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Academic Details Tab -->
+    <div id="AcademicDetails" class="tab-content">
+      <h2>Academic Details</h2>
+      <form id="academicForm" novalidate>
+        <input type="text" id="academicId" placeholder="Student ID" required>
+        <input type="text" id="academicGrade" placeholder="Grade" required>
+        <input type="number" id="academicMarks" placeholder="Marks" required min="0" max="100">
+        <button type="submit">Add Academic Details</button>
+      </form>
+      <table id="academicTable">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Grade</th>
+            <th>Marks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Academic details rows will be added here dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sports Details Tab -->
+    <div id="SportsDetails" class="tab-content">
+      <h2>Sports Details</h2>
+      <form id="sportsForm" novalidate>
+        <input type="text" id="sportsId" placeholder="Student ID" required>
+        <input type="text" id="sportsActivity" placeholder="Sports Activity" required>
+        <input type="text" id="sportsAchievement" placeholder="Achievement" required>
+        <button type="submit">Add Sports Details</button>
+      </form>
+      <table id="sportsTable">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Sports Activity</th>
+            <th>Achievement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Sports details rows will be added here dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tech Details Tab -->
+    <div id="TechDetails" class="tab-content">
+      <h2>Tech Details</h2>
+      <form id="techForm" novalidate>
+        <input type="text" id="techId" placeholder="Student ID" required>
+        <input type="text" id="techSkill" placeholder="Tech Skill" required>
+        <input type="text" id="techProject" placeholder="Project" required>
+        <button type="submit">Add Tech Details</button>
+      </form>
+      <table id="techTable">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Tech Skill</th>
+            <th>Project</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Tech details rows will be added here dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Attendance Tracking -->
+    <div class="section">
+      <h2>Attendance Tracking</h2>
+      <form id="attendanceForm" novalidate>
+        <input type="text" id="attendanceId" placeholder="Student ID" required>
+        <button type="submit">Mark Attendance</button>
+      </form>
+      <table id="attendanceTable">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Attendance rows will be added here dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Fee Management -->
+    <div class="section">
+      <h2>Fee Management</h2>
+      <form id="feeForm" novalidate>
+        <input type="text" id="feeId" placeholder="Student ID" required>
+        <input type="number" id="feeAmount" placeholder="Amount" required min="0">
+        <button type="submit">Add Fee</button>
+      </form>
+      <table id="feeTable">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Amount</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Fee rows will be added here dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Document Upload -->
+    <div class="section">
+      <h2>Document Upload</h2>
+      <form id="documentForm" novalidate>
+        <input type="text" id="documentId" placeholder="Student ID" required>
+        <input type="file" id="documentFile" required>
+        <button type="submit">Upload Document</button>
+      </form>
+      <table id="documentTable">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Document Name</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Document rows will be added here dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Data storage (simulated in-memory storage)
+    let students = [];
+    let personalDetails = [];
+    let academicDetails = [];
+    let sportsDetails = [];
+    let techDetails = [];
+    let attendance = [];
+    let fees = [];
+    let documents = [];
+
+    // Update Analytics
+    function updateAnalytics() {
+      document.getElementById('totalStudents').textContent = students.length;
+      document.getElementById('totalFees').textContent = `$${fees.reduce((sum, fee) => sum + fee.amount, 0)}`;
+      document.getElementById('totalAttendance').textContent = attendance.length;
+    }
+
+    // Tab Navigation
+    function openTab(evt, tabName) {
+      const tabContents = document.getElementsByClassName('tab-content');
+      for (let i = 0; i < tabContents.length; i++) {
+        tabContents[i].style.display = 'none';
+      }
+      const tabButtons = document.getElementsByClassName('tab-button');
+      for (let i = 0; i < tabButtons.length; i++) {
+        tabButtons[i].className = tabButtons[i].className.replace(' active', '');
+      }
+      document.getElementById(tabName).style.display = 'block';
+      evt.currentTarget.className += ' active';
+    }
+
+    // Show Notification
+    function showNotification(message, type) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = `notification ${type}`;
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+
+    // Search Students
+    function searchStudents() {
+      const searchTerm = document.getElementById('searchStudent').value.toLowerCase();
+      const filteredStudents = students.filter(student =>
+        student.name.toLowerCase().includes(searchTerm) || student.id.toLowerCase().includes(searchTerm)
+      );
+      renderStudentTable(filteredStudents);
+    }
+
+    // Student Management
+    document.getElementById('studentForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('studentName').value;
+      const id = document.getElementById('studentId').value;
+
+      if (students.some(student => student.id === id)) {
+        showNotification('Student ID already exists!', 'error');
+        return;
+      }
+
+      students.push({ name, id });
+      renderStudentTable();
+      updateAnalytics();
+      showNotification('Student added successfully!', 'success');
+      e.target.reset();
+    });
+
+    function renderStudentTable(data = students) {
+      const tbody = document.getElementById('studentTable').querySelector('tbody');
+      tbody.innerHTML = data.map(student => `
+        <tr>
+          <td>${student.name}</td>
+          <td>${student.id}</td>
+          <td>
+            <button onclick="editStudent('${student.id}')">Edit</button>
+            <button onclick="deleteStudent('${student.id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function deleteStudent(id) {
+      students = students.filter(student => student.id !== id);
+      renderStudentTable();
+      updateAnalytics();
+      showNotification('Student deleted successfully!', 'success');
+    }
+
+    function editStudent(id) {
+      const student = students.find(student => student.id === id);
+      if (student) {
+        document.getElementById('studentName').value = student.name;
+        document.getElementById('studentId').value = student.id;
+        students = students.filter(student => student.id !== id);
+        renderStudentTable();
+        showNotification('Student ready for editing!', 'success');
+      }
+    }
+
+    // Personal Details
+    document.getElementById('personalForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const id = document.getElementById('personalId').value;
+      const address = document.getElementById('personalAddress').value;
+      const phone = document.getElementById('personalPhone').value;
+
+      personalDetails.push({ id, address, phone });
+      renderPersonalTable();
+      showNotification('Personal details added successfully!', 'success');
+      e.target.reset();
+    });
+
+    function renderPersonalTable() {
+      const tbody = document.getElementById('personalTable').querySelector('tbody');
+      tbody.innerHTML = personalDetails.map(detail => `
+        <tr>
+          <td>${detail.id}</td>
+          <td>${detail.address}</td>
+          <td>${detail.phone}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Academic Details
+    document.getElementById('academicForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const id = document.getElementById('academicId').value;
+      const grade = document.getElementById('academicGrade').value;
+      const marks = document.getElementById('academicMarks').value;
+
+      academicDetails.push({ id, grade, marks });
+      renderAcademicTable();
+      showNotification('Academic details added successfully!', 'success');
+      e.target.reset();
+    });
+
+    function renderAcademicTable() {
+      const tbody = document.getElementById('academicTable').querySelector('tbody');
+      tbody.innerHTML = academicDetails.map(detail => `
+        <tr>
+          <td>${detail.id}</td>
+          <td>${detail.grade}</td>
+          <td>${detail.marks}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Sports Details
+    document.getElementById('sportsForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const id = document.getElementById('sportsId').value;
+      const activity = document.getElementById('sportsActivity').value;
+      const achievement = document.getElementById('sportsAchievement').value;
+
+      sportsDetails.push({ id, activity, achievement });
+      renderSportsTable();
+      showNotification('Sports details added successfully!', 'success');
+      e.target.reset();
+    });
+
+    function renderSportsTable() {
+      const tbody = document.getElementById('sportsTable').querySelector('tbody');
+      tbody.innerHTML = sportsDetails.map(detail => `
+        <tr>
+          <td>${detail.id}</td>
+          <td>${detail.activity}</td>
+          <td>${detail.achievement}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Tech Details
+    document.getElementById('techForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const id = document.getElementById('techId').value;
+      const skill = document.getElementById('techSkill').value;
+      const project = document.getElementById('techProject').value;
+
+      techDetails.push({ id, skill, project });
+      renderTechTable();
+      showNotification('Tech details added successfully!', 'success');
+      e.target.reset();
+    });
+
+    function renderTechTable() {
+      const tbody = document.getElementById('techTable').querySelector('tbody');
+      tbody.innerHTML = techDetails.map(detail => `
+        <tr>
+          <td>${detail.id}</td>
+          <td>${detail.skill}</td>
+          <td>${detail.project}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Attendance Tracking
+    document.getElementById('attendanceForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const id = document.getElementById('attendanceId').value;
+      const date = new Date().toLocaleDateString();
+
+      attendance.push({ id, date });
+      renderAttendanceTable();
+      updateAnalytics();
+      showNotification('Attendance marked successfully!', 'success');
+      e.target.reset();
+    });
+
+    function renderAttendanceTable() {
+      const tbody = document.getElementById('attendanceTable').querySelector('tbody');
+      tbody.innerHTML = attendance.map(record => `
+        <tr>
+          <td>${record.id}</td>
+          <td>${record.date}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Fee Management
+    document.getElementById('feeForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const id = document.getElementById('feeId').value;
+      const amount = parseFloat(document.getElementById('feeAmount').value);
+      const date = new Date().toLocaleDateString();
+
+      fees.push({ id, amount, date });
+      renderFeeTable();
+      updateAnalytics();
+      showNotification('Fee added successfully!', 'success');
+      e.target.reset();
+    });
+
+    function renderFeeTable() {
+      const tbody = document.getElementById('feeTable').querySelector('tbody');
+      tbody.innerHTML = fees.map(fee => `
+        <tr>
+          <td>${fee.id}</td>
+          <td>$${fee.amount}</td>
+          <td>${fee.date}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Document Upload
+    document.getElementById('documentForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const id = document.getElementById('documentId').value;
+      const file = document.getElementById('documentFile').files[0];
+      const date = new Date().toLocaleDateString();
+
+      if (file) {
+        documents.push({ id, name: file.name, date });
+        renderDocumentTable();
+        showNotification('Document uploaded successfully!', 'success');
+        e.target.reset();
+      }
+    });
+
+    function renderDocumentTable() {
+      const tbody = document.getElementById('documentTable').querySelector('tbody');
+      tbody.innerHTML = documents.map(doc => `
+        <tr>
+          <td>${doc.id}</td>
+          <td>${doc.name}</td>
+          <td>${doc.date}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Initial render
+    updateAnalytics();
+  </script>
+</body>
+</html>
