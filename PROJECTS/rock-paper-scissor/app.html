@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .choices {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        #result {
+            font-size: 24px;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: white;
+            width: 300px;
+            text-align: center;
+        }
+
+        #score {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+
+        .reset-btn {
+            background-color: #008CBA;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rock Paper Scissors</h1>
+    <div class="choices">
+        <button onclick="playGame('rock')">Rock 🗿</button>
+        <button onclick="playGame('paper')">Paper 📄</button>
+        <button onclick="playGame('scissors')">Scissors ✂️</button>
+    </div>
+    <div id="result">Choose your weapon!</div>
+    <div id="score">Wins: 0 | Losses: 0 | Ties: 0</div>
+    <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+
+    <script>
+        let wins = 0;
+        let losses = 0;
+        let ties = 0;
+
+        function computerPlay() {
+            const choices = ['rock', 'paper', 'scissors'];
+            const randomIndex = Math.floor(Math.random() * 3);
+            return choices[randomIndex];
+        }
+
+        function playGame(playerSelection) {
+            const computerSelection = computerPlay();
+            const result = determineWinner(playerSelection, computerSelection);
+            
+            updateScore(result);
+            displayResult(playerSelection, computerSelection, result);
+            updateScoreDisplay();
+        }
+
+        function determineWinner(player, computer) {
+            if (player === computer) return 'tie';
+            
+            const winConditions = {
+                rock: 'scissors',
+                paper: 'rock',
+                scissors: 'paper'
+            };
+            
+            return winConditions[player] === computer ? 'win' : 'lose';
+        }
+
+        function updateScore(result) {
+            if (result === 'win') wins++;
+            else if (result === 'lose') losses++;
+            else ties++;
+        }
+
+        function displayResult(player, computer, result) {
+            const resultText = {
+                win: `You Win! ${player} beats ${computer}`,
+                lose: `You Lose! ${computer} beats ${player}`,
+                tie: `It's a Tie! Both chose ${player}`
+            };
+            
+            document.getElementById('result').textContent = resultText[result];
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('score').textContent = 
+                `Wins: ${wins} | Losses: ${losses} | Ties: ${ties}`;
+        }
+
+        function resetGame() {
+            wins = 0;
+            losses = 0;
+            ties = 0;
+            updateScoreDisplay();
+            document.getElementById('result').textContent = 'Game reset! Choose your weapon!';
+        }
+    </script>
+</body>
+</html>
